@@ -114,7 +114,7 @@ footer{color:var(--dim);font-size:14px;text-align:center;padding:40px 0 50px}
           <details><summary>Så gör du</summary><ol>
             <li>Högerklicka på zip-filen och välj <b>Extrahera alla…</b></li>
             <li>Öppna mappen <b>Windows</b> och dubbelklicka på <b id="start-welldrift">WELLDRIFT.bat</b>.</li>
-            <li>Spelet kollar efter en ny version varje gång det startar och hämtar den själv.</li>
+            <li>Finns det en ny version hämtas den medan du spelar. Tryck <b>UPPDATERA NU</b> i menyn när den är klar.</li>
           </ol></details>
         </div>
       </article>
@@ -193,7 +193,7 @@ function latest(repo, key) {
       document.getElementById('ver-' + key).textContent =
         `Version ${v} · ${d}` + (zip ? ` · ${Math.round(zip.size / 1e6)} MB` : '');
       // (från versionen där spelet själv uppdaterar sig startar man exe-filen direkt)
-      const exe = { rodmark: ['0.2.7', 'Rodmark.exe', 'RODMARK.bat'], welldrift: ['0.4.0', 'Welldrift.exe', 'WELLDRIFT.bat'] }[key];
+      const exe = { rodmark: ['0.2.7', 'Rodmark.exe', 'RODMARK.bat'], welldrift: ['0.3.10', 'Welldrift.exe', 'WELLDRIFT.bat'] }[key];
       if (exe) {
         const newer = (a, b) => { const x = a.split('.').map(Number), y = b.split('.').map(Number); for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); return true; };
         document.getElementById('start-' + key).textContent = newer(v, exe[0]) ? exe[1] : exe[2];
