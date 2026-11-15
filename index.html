@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spelhyllan</title>
+<meta name="description" content="Alla spelen på ett ställe: spela direkt i webbläsaren eller ladda ner de stora till datorn. Allt uppdaterar sig självt.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffb020'/%3E%3Cpath d='M18 26h28a8 8 0 0 1 8 8v6a6 6 0 0 1-11 3l-3-4H24l-3 4a6 6 0 0 1-11-3v-6a8 8 0 0 1 8-8z' fill='%2314100a'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0f1016;--bg2:#161822;--card:#1b1e2b;--line:#2b3044;--txt:#eef1f8;--dim:#a2abc0;
+  --acc:#ffb020;--acc2:#ff5a36;--ok:#4cd27a;--blue:#4aa3ff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font:17px/1.55 system-ui,"Segoe UI",Roboto,sans-serif}
+a{color:var(--acc)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+header{padding:54px 0 30px;text-align:center;background:
+  radial-gradient(ellipse 60% 80% at 20% 0,#3b2410 0,transparent 70%),
+  radial-gradient(ellipse 60% 80% at 80% 0,#13284a 0,transparent 70%)}
+h1{margin:0;font-size:clamp(46px,11vw,96px);line-height:1;letter-spacing:.05em;font-weight:900;font-style:italic;
+  background:linear-gradient(180deg,#ffe08a,var(--acc) 45%,var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 0 #000)}
+.lead{max-width:640px;margin:14px auto 22px;color:var(--dim);font-size:19px}
+.jump{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.jump a{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--line);
+  background:var(--bg2);color:var(--txt);text-decoration:none;font-weight:700}
+.jump a:hover{border-color:var(--acc)}
+h2{font-size:clamp(26px,4.5vw,36px);margin:44px 0 6px;letter-spacing:.02em}
+h2 span{color:var(--acc)}
+.sub{color:var(--dim);margin:0 0 20px}
+
+/* datorspelen */
+.pc{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.pcard img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
+.pbody{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
+.pname{font-size:26px;font-weight:900;letter-spacing:.06em;margin:0}
+.pbody p{margin:0;color:var(--dim)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;font-weight:700;padding:3px 9px;border-radius:999px;background:#252a3b;color:#cfd6e6;border:1px solid #343b52}
+.chip.ok{background:#173322;color:#9ff0bd;border-color:#245a39}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:auto;
+  background:linear-gradient(180deg,#ffc247,var(--acc2));color:#1a0d00;font-weight:900;font-size:19px;
+  padding:13px 18px;border-radius:12px;text-decoration:none;box-shadow:0 5px 0 #7a2a10}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #7a2a10}
+.btn svg{width:22px;height:22px;flex:none}
+.ver{font-size:14px;color:var(--dim);text-align:center;min-height:1.3em}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--txt)}
+details ol{margin:8px 0 0;padding-left:22px;color:var(--dim)}
+details li{margin:5px 0}
+details b,.help b{color:#fff}
+.help{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin-top:18px}
+.help>div{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.help p{margin:6px 0 0;color:var(--dim);font-size:16px}
+
+/* webbspelen */
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))}
+.g{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  text-decoration:none;color:var(--txt);transition:transform .12s,border-color .12s}
+.g:hover,.g:focus-visible{transform:translateY(-3px);border-color:var(--acc);outline:none}
+.g img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
+.g div{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.g b{font-size:19px}
+.g span.t{color:var(--dim);font-size:15px;line-height:1.4}
+.g .chips{margin-top:auto;padding-top:4px}
+.play{color:var(--acc);font-weight:800;font-size:14px}
+footer{color:var(--dim);font-size:14px;text-align:center;padding:40px 0 50px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>SPELHYLLAN</h1>
+    <p class="lead">Alla spelen på ett ställe. Spela direkt i webbläsaren, eller ladda ner de stora till datorn. Allt uppdaterar sig självt, så alla har alltid senaste versionen.</p>
+    <nav class="jump">
+      <a href="#datorn">🖥️ Till datorn</a>
+      <a href="#webben">🌐 Spela direkt</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="datorn">
+    <h2>Till <span>datorn</span></h2>
+    <p class="sub">Stora spel för Windows 10/11. Ladda ner en gång, sedan hämtar spelet nya versioner självt. Spela ihop med kompisar, var ni än bor.</p>
+    <div class="pc">
+      <article class="pcard">
+        <img src="bilder/pc-rodmark.jpg" alt="RÖDMARK: förstaperson i skogen på en främmande planet" width="800" height="450">
+        <div class="pbody">
+          <h3 class="pname">RÖDMARK</h3>
+          <p>Raketen har kraschat på en skogsplanet. Fäll träd, bryt malm och bygg en fabrik som arbetar åt dig. Akta dig för stormen.</p>
+          <div class="chips"><span class="chip">1–4 spelare</span><span class="chip">över internet</span><span class="chip ok">uppdaterar sig självt</span></div>
+          <a class="btn" id="dl-rodmark" href="https://github.com/8bitcat/rodmark/releases/latest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>Ladda ner</a>
+          <div class="ver" id="ver-rodmark"></div>
+          <details><summary>Så gör du</summary><ol>
+            <li>Högerklicka på zip-filen och välj <b>Extrahera alla…</b></li>
+            <li>Öppna mappen <b>Windows</b> och dubbelklicka på <b id="start-rodmark">Rodmark.exe</b>.</li>
+            <li>Finns det en ny version hämtas den medan du spelar. Tryck <b>UPPDATERA NU</b> i menyn när den är klar.</li>
+          </ol><p style="margin:8px 0 0"><a href="https://8bitcat.github.io/rodmark/">Mer om RÖDMARK</a></p></details>
+        </div>
+      </article>
+
+      <article class="pcard">
+        <img src="bilder/pc-welldrift.jpg" alt="WELLDRIFT: hissen i schaktet med mätare för djup och luft" width="800" height="450">
+        <div class="pbody">
+          <h3 class="pname">WELLDRIFT</h3>
+          <p>Bygg ett hem på en hiss som sakta sjunker genom ett enormt schakt. Laga mat, fiska upp skrot och se hur djupt ni kommer.</p>
+          <div class="chips"><span class="chip">1–4 spelare</span><span class="chip">över internet</span><span class="chip ok">uppdaterar sig självt</span></div>
+          <a class="btn" id="dl-welldrift" href="https://github.com/8bitcat/welldrift/releases/latest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>Ladda ner</a>
+          <div class="ver" id="ver-welldrift"></div>
+          <details><summary>Så gör du</summary><ol>
+            <li>Högerklicka på zip-filen och välj <b>Extrahera alla…</b></li>
+            <li>Öppna mappen <b>Windows</b> och dubbelklicka på <b id="start-welldrift">WELLDRIFT.bat</b>.</li>
+            <li>Spelet kollar efter en ny version varje gång det startar och hämtar den själv.</li>
+          </ol></details>
+        </div>
+      </article>
+
+      <article class="pcard">
+        <img src="bilder/pc-knuffrakan.jpg" alt="KNUFFRAKAN: bilar som knuffas på en neonbana" width="800" height="450">
+        <div class="pbody">
+          <h3 class="pname">KNUFFRAKAN</h3>
+          <p>Packracing med knuffar, vapen och 13 galna banor. Den stora versionen för datorn.</p>
+          <div class="chips"><span class="chip">flera spelare</span><span class="chip">över internet</span><span class="chip ok">uppdaterar sig självt</span></div>
+          <a class="btn" href="https://8bitcat.github.io/knuffrakan-pc/Installera-Knuffrakan.zip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>Ladda ner</a>
+          <div class="ver" id="ver-knuffrakan">Installeraren är liten. Själva spelet (ca 5,5 GB) hämtar den.</div>
+          <details><summary>Så gör du</summary><ol>
+            <li>Högerklicka på zip-filen och välj <b>Extrahera alla…</b> Öppna mappen.</li>
+            <li>Dubbelklicka på <b>Installera Knuffrakan</b>. Ett fönster hämtar spelet, det tar en stund.</li>
+            <li>Sedan startar spelet, och <b>KNUFFRAKAN</b> ligger på skrivbordet.</li>
+          </ol><p style="margin:8px 0 0"><a href="https://8bitcat.github.io/knuffrakan-pc/">Mer om KNUFFRAKAN</a></p></details>
+        </div>
+      </article>
+    </div>
+
+    <div class="help">
+      <div><b>«Windows skyddade datorn»</b><p>Tryck på <b>Mer information</b> och sedan <b>Kör ändå</b>. Det händer med alla spel som inte köpts i en butik.</p></div>
+      <div><b>«Vill du tillåta …?»</b><p>Första gången frågar Windows om spelet får använda nätverket. Tryck <b>Ja</b> eller <b>Tillåt</b>, så hittar ni varandra.</p></div>
+      <div><b>Spela ihop</b><p>En startar ett spel. De andra ser det i menyn efter några sekunder och trycker på det. Alla måste ha samma version, och det får de av sig själv.</p></div>
+    </div>
+  </section>
+
+  <section id="webben">
+    <h2>Spela <span>direkt</span></h2>
+    <p class="sub">Inget att ladda ner: tryck på ett spel så startar det i webbläsaren. De här är alltid senaste versionen.</p>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<footer>Gjorda av 8bitcat · <a href="https://github.com/8bitcat">github.com/8bitcat</a></footer>
+
+<script>
+const WEB = [
+  ['snabbfilen', 'Snabbfilen', 'Livet i Pixelstaden: jobba, plugga, köp ett hus och hälsa på varandra.', ['online']],
+  ['knuffrakan', 'Knuffrakan', 'Packracing i 300 km/h genom rosa snöberg. Knuffa de andra av banan.', ['online med rumskod']],
+  ['kurvkungen', 'Kurvkungen', 'Pixelracing med vapen, och Grand Prix i formel 1.', ['online med rumskod']],
+  ['skrotderby', 'Skrotderby', 'Destruction derby där allt går sönder. Ett nytt race varje minut.', ['online']],
+  ['kokskaos', 'Kökskaos', 'Kaos i restaurangköket för upp till 9 kockar.', ['upp till 9', 'online']],
+  ['slemkungens-hamnd', 'Slemkungens Hämnd', 'Slåss mot Slemkungens gäng, sida vid sida.', ['1–5 hjältar', 'mobilen som handkontroll']],
+  ['slemkungens-grotta', 'Slemkungens Grotta', 'Ett äventyr i grottorna för hela gänget.', ['1–5 hjältar', 'mobilen som handkontroll']],
+  ['trollnatt', 'Trollnatt', 'Bygg byn på dagen och försvara den mot trollen på natten.', ['flera', 'mobilen som handkontroll']],
+  ['vildmarken2', 'Vildmarken 2', 'Överlev i den nordiska vildmarken. Bygg, samla och försvara.', ['co-op']],
+  ['vildmark', 'Vildmark', 'Klossvärld med årstider: bygg en bas och klara natten.', ['co-op']],
+  ['imperium/v4', 'Imperium', 'Strategi: bygg en nation, en armé och vinn världen.', ['flera']],
+  ['pixelverkstan', 'Pixelverkstan', 'Bygg datorer från 1983 till 2026 i en pixlad butik.', ['co-op']],
+  ['mobilfabriken', 'Mobilfabriken', 'Starta ett mobilföretag i garaget 2007 och bli störst.', ['1 spelare']],
+  ['lantliv', 'Lantliv', 'Bondgård ihop: odla, sköt djuren och bygg ut gården.', ['co-op']],
+  ['dromgarden', 'Drömgården', 'En mysig gård att sköta tillsammans. Funkar fint på mobilen.', ['co-op', 'mobil']],
+  ['pixelskolan', 'Pixelskolan', 'Matte, klockan och svenska i pixelskolan, för årskurs 2–3.', ['lära sig']],
+];
+const grid = document.getElementById('grid');
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+grid.innerHTML = WEB.map(([path, name, text, tags]) =>
+  `<a class="g" href="https://8bitcat.github.io/${path}/" target="_blank" rel="noopener">
+     <img src="bilder/${path.replace('/', '-')}.jpg" alt="${esc(name)}" loading="lazy" width="800" height="450">
+     <div><b>${esc(name)}</b><span class="t">${esc(text)}</span>
+     <span class="chips">${tags.map(t => `<span class="chip">${esc(t)}</span>`).join('')}</span>
+     <span class="play">Spela ▸</span></div></a>`).join('');
+
+// datorspelen: knappen pekar direkt på zip-filen i senaste versionen, med storlek och datum
+function latest(repo, key) {
+  fetch(`https://api.github.com/repos/8bitcat/${repo}/releases/latest`)
+    .then(r => r.ok ? r.json() : null)
+    .then(j => {
+      if (!j) return;
+      const zip = (j.assets || []).find(a => /\.zip$/i.test(a.name));
+      const v = (j.tag_name || '').replace(/^v/, '');
+      const d = new Date(j.published_at).toLocaleDateString('sv-SE', { day: 'numeric', month: 'long' });
+      if (zip) document.getElementById('dl-' + key).href = zip.browser_download_url;
+      document.getElementById('ver-' + key).textContent =
+        `Version ${v} · ${d}` + (zip ? ` · ${Math.round(zip.size / 1e6)} MB` : '');
+      // (från versionen där spelet själv uppdaterar sig startar man exe-filen direkt)
+      const exe = { rodmark: ['0.2.7', 'Rodmark.exe', 'RODMARK.bat'], welldrift: ['0.4.0', 'Welldrift.exe', 'WELLDRIFT.bat'] }[key];
+      if (exe) {
+        const newer = (a, b) => { const x = a.split('.').map(Number), y = b.split('.').map(Number); for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); return true; };
+        document.getElementById('start-' + key).textContent = newer(v, exe[0]) ? exe[1] : exe[2];
+      }
+    }).catch(() => {});
+}
+latest('rodmark', 'rodmark');
+latest('welldrift', 'welldrift');
+</script>
+</body>
+</html>
